@@ -12,13 +12,21 @@ if [ -d "/jails/${name}" ]; then
   exit 0
 fi
 
-zfs create zroot/JAILS/${name}
-zfs create zroot/JAILS/${name}/tmp
-zfs create -o canmount=off zroot/JAILS/${name}/usr
-zfs create zroot/JAILS/${name}/usr/home
-zfs create -o canmount=off zroot/JAILS/${name}/var
-zfs create zroot/JAILS/${name}/var/log
-zfs create -o jailed=on -o mountpoint=none zroot/JAILS/${name}/zdata
+jroot=`zfs mount | grep '[[:space:]]/jails$' | awk '{print $1}'`
+zfs create ${jroot}/${name}
+zfs create ${jroot}/${name}/tmp
+zfs create -o canmount=off ${jroot}/${name}/usr
+zfs create ${jroot}/${name}/usr/home
+zfs create -o canmount=off ${jroot}/${name}/var
+zfs create ${jroot}/${name}/var/log
+
+myroot=`zfs mount | grep '[[:space:]]/$' | awk '{print $1}'`
+mymountpoint=`zfs get -H -o value mountpoint $myroot`
+# can't set jailed=on if we're in a jail already
+if [ $mymountpoint = "/" ]; then
+    jailed_args="-o jailed=on"
+fi
+zfs create $jailed_args -o mountpoint=none ${jroot}/${name}/zdata
 
 if [ ! -f ~/dist/base.txz ]; then
   mkdir -p ~/dist
