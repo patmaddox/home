@@ -1,0 +1,32 @@
+#!/bin/sh
+set -e
+
+if [ ! "$1" ]; then
+  echo "Usage: jlfs <name>"
+  exit 1
+fi
+
+name=$1
+
+if [ -d "/jails/${name}" ]; then
+  exit 0
+fi
+
+zfs create zroot/JAILS/${name}
+zfs create zroot/JAILS/${name}/tmp
+zfs create -o canmount=off zroot/JAILS/${name}/usr
+zfs create zroot/JAILS/${name}/usr/home
+zfs create -o canmount=off zroot/JAILS/${name}/var
+zfs create zroot/JAILS/${name}/var/log
+zfs create -o jailed=on -o mountpoint=none zroot/JAILS/${name}/zdata
+
+if [ ! -f ~/dist/base.txz ]; then
+  mkdir -p ~/dist
+  fetch -o ~/dist/base.txz https://download.freebsd.org/releases/amd64/13.1-RELEASE/base.txz
+fi
+
+tar -C /jails/${name} -xf ~/dist/base.txz
+cat > /jails/${name}/etc/resolv.conf << EOF
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+EOF
