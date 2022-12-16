@@ -1,0 +1,39 @@
+#!/bin/sh
+set -e
+
+if [ ! "$1" -o ! "$2" -o ! "$3" ]; then
+    echo "Usage: jlprep <name> <ip> <iface>"
+    exit 1
+fi
+
+name=$1
+ip=$2
+iface=$3
+jail="/jails/${name}"
+
+## HOST - add interfaces
+aname=`ifconfig epair create up`
+bname=`echo "$aname" | sed -e 's/a$/b/'`
+
+ifconfig jails addm $aname
+ifconfig $aname name ${iface}a
+ifconfig $bname name ${iface}b
+
+## JAIL - configure rc.conf et al
+ipprefix=`echo $ip | grep -o '^[[:digit:]]*.[[:digit:]]*.[[:digit:]]*'`
+sysrc="sysrc -f ${jail}/etc/rc.conf"
+
+$sysrc ifconfig_${iface}b_name="elink"
+$sysrc ifconfig_elink="${ip}"
+$sysrc defaultrouter="${ipprefix}.1"
+$sysrc devfs_load_rulesets="YES"
+
+mkdir -p ${jail}/usr/local/etc/pkg/repos
+echo 'FreeBSD: { enabled: no }' > ${jail}/usr/local/etc/pkg/repos/FreeBSD.conf
+echo 'poudriere: { url: "http://192.168.2.1", enabled: yes }' > ${jail}/usr/local/etc/pkg/repos/poudriere.conf
+if [ ! -f ${jail}/etc/resolv.conf ]; then
+    cat > ${jail}/etc/resolv.conf << EOF
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+EOF
+fi

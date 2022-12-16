@@ -22,11 +22,10 @@ zfs create ${jroot}/${name}/var/log
 
 myroot=`zfs mount | grep '[[:space:]]/$' | awk '{print $1}'`
 mymountpoint=`zfs get -H -o value mountpoint $myroot`
-# can't set jailed=on if we're in a jail already
+# can't delegate a dataset if we're in a jail, so don't create one
 if [ $mymountpoint = "/" ]; then
-    jailed_args="-o jailed=on"
+    zfs create -o jailed=on -o mountpoint=none ${jroot}/${name}/zdata
 fi
-zfs create $jailed_args -o mountpoint=none ${jroot}/${name}/zdata
 
 if [ ! -f ~/dist/base.txz ]; then
   mkdir -p ~/dist
@@ -34,7 +33,3 @@ if [ ! -f ~/dist/base.txz ]; then
 fi
 
 tar -C /jails/${name} -xf ~/dist/base.txz
-cat > /jails/${name}/etc/resolv.conf << EOF
-nameserver 8.8.8.8
-nameserver 8.8.4.4
-EOF
