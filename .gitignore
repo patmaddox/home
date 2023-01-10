@@ -11,3 +11,5 @@
 /.mozilla
 /.serverauth.*
 /.ssh
+/priv
+/ratio
