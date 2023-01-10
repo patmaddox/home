@@ -4,6 +4,9 @@
 /.cache
 /.config
 /.dbus
+/.emacs.d/straight/build
+/.emacs.d/straight/build-cache.el
+/.emacs.d/straight/repos
 /.local
 /.mozilla
 /.serverauth.*
