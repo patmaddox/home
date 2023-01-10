@@ -11,3 +11,8 @@
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
+
+;; packages
+(straight-use-package 'elixir-mode)
+(straight-use-package 'magit)
+(straight-use-package 'typescript-mode)
