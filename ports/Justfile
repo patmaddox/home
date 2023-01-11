@@ -1,0 +1,14 @@
+help:
+  @just -l
+
+build-prod:
+  poudriere bulk -j 13_1 -f prod
+
+build-dev:
+  poudriere bulk -j 13_1 -O local -C -f dev
+
+outdated:
+  poudriere bulk -j 13_1 -O local -f to-build -n
+
+clean:
+  poudriere pkgclean -j 13_1 -O local -f prod
