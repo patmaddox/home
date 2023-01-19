@@ -7,6 +7,8 @@
 /.emacs.d/straight/build
 /.emacs.d/straight/build-cache.el
 /.emacs.d/straight/repos
+/.emacs.d/projectile-bookmarks.eld
+/.emacs.d/projectile.cache
 /.local
 /.mozilla
 /.serverauth.*
