@@ -2,13 +2,16 @@ help:
   @just -l
 
 build-prod:
-  poudriere bulk -j 13_1 -f prod
+  poudriere bulk -j 13_1 -f prod -b latest
 
 build-dev:
-  poudriere bulk -j 13_1 -O local -C -f dev
+  poudriere bulk -j 13_1 -O local -C -f dev -b latest
 
 outdated:
   poudriere bulk -j 13_1 -O local -f to-build -n
+
+update:
+  poudriere ports -u
 
 clean:
   poudriere pkgclean -j 13_1 -O local -f prod
