@@ -9,7 +9,9 @@
 /.emacs.d/straight/repos
 /.emacs.d/projectile-bookmarks.eld
 /.emacs.d/projectile.cache
+/.hex
 /.local
+/.mix
 /.mozilla
 /.serverauth.*
 /.ssh
