@@ -16,3 +16,7 @@
 (straight-use-package 'elixir-mode)
 (straight-use-package 'magit)
 (straight-use-package 'typescript-mode)
+
+;; org / agenda
+(require 'ol) ; org-mode links
+
