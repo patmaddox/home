@@ -1,0 +1,6 @@
+devel/py-awscli
+net/isc-dhcp44-client
+sysutils/amazon-ssm-agent
+sysutils/ebsnvme-id
+sysutils/ec2-scripts
+sysutils/firstboot-freebsd-update

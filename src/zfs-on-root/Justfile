@@ -6,3 +6,9 @@ build-gce-image:
 
 build-gce-packages:
   poudriere bulk -j 13_1 -f gce/packages
+
+build-ec2-image:
+  poudriere image -t zfs+gpt -j 13_1 -h freebsd-ec2 -s 2G -n 131ec2 -c ec2/overlay -f ec2/packages
+
+build-ec2-packages:
+  poudriere bulk -j 13_1 -f ec2/packages

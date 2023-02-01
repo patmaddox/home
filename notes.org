@@ -3,3 +3,8 @@
 - Make a disk.raw file, then `tar --format=gnutar -zcf myimage.tar.gz disk.raw` (from src/release GCE tool)
 - Upload it to GCP storage
 - `gcloud compute images create myimage --source-uri=gs://mybucket/myimage.tar.gz --guest-os-features=UEFI_COMPATIBLE`
+** AWS
+- Upload image to S3
+- Create a snapshot: `aws ec2 import-snapshot --disk-container Format=raw,Url=s3://mybucket/myimage.img`
+- Make an AMI (use UEFI boot)
+  I used console, need to figure out command line
