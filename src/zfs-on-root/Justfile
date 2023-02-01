@@ -1,0 +1,8 @@
+help:
+  @just -l
+
+build-gce-image:
+  poudriere image -t zfs+gpt -j 13_1 -h freebsd-gce -s 2G -n 131gce -c gce/overlay -f gce/packages
+
+build-gce-packages:
+  poudriere bulk -j 13_1 -f gce/packages
