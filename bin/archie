@@ -1,0 +1,2 @@
+#!/bin/sh
+doas jexec -l archie login -f patmaddox
