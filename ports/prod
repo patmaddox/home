@@ -1,14 +1,16 @@
 databases/postgresql13-server
 databases/postgresql14-server
 deskutils/just
+devel/py-awscli
 devel/git
 devel/gmake
 editors/emacs
 editors/emacs@nox
-editors/vscode
+#editors/vscode
 lang/elixir-devel
 lang/erlang-runtime24
 lang/erlang-runtime25
+multimedia/webcamd
 net-mgmt/alertmanager
 net-mgmt/prometheus2
 ports-mgmt/poudriere-devel
@@ -20,6 +22,7 @@ sysutils/htop
 sysutils/mcelog
 sysutils/memtester
 sysutils/node_exporter
+sysutils/sanoid
 textproc/jq
 textproc/p5-ack
 www/chromium
