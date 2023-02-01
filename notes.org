@@ -1,0 +1,5 @@
+* FreeBSD ZFS-on-root on GCP and AWS with Poudriere
+** GCP
+- Make a disk.raw file, then `tar --format=gnutar -zcf myimage.tar.gz disk.raw` (from src/release GCE tool)
+- Upload it to GCP storage
+- `gcloud compute images create myimage --source-uri=gs://mybucket/myimage.tar.gz --guest-os-features=UEFI_COMPATIBLE`
