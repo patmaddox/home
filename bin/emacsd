@@ -20,11 +20,11 @@ case $command in
 	;;
     status)
 	if [ $daemon_exit -eq 0 ]; then
-	    echo "emacs --daemon is running"
+	    echo "emacs --daemon is running."
 	else
-	    echo "emacs --daemon is not running"
+	    echo "emacs --daemon is not running."
 	fi
 	;;
     *)
-	echo "Usage: emacsd start|stop"
+	echo "Usage: emacsd start|stop|status"
 esac
