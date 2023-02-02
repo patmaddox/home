@@ -1,0 +1,30 @@
+#!/bin/sh
+command=$1
+shift 1
+
+daemon=$(ps ax | grep "emacs --daemon" | grep -v grep)
+daemon_exit=$?
+
+case $command in
+    start)
+	if [ $daemon_exit -eq 1 ]; then
+	    emacs --daemon
+	fi
+	emacsclient -cn
+	;;
+    stop)
+	if [ $daemon_exit -eq 0 ]; then
+	    daemon_pid=$(echo $daemon | awk '{print $1}')
+	    kill $daemon_pid
+	fi
+	;;
+    status)
+	if [ $daemon_exit -eq 0 ]; then
+	    echo "emacs --daemon is running"
+	else
+	    echo "emacs --daemon is not running"
+	fi
+	;;
+    *)
+	echo "Usage: emacsd start|stop"
+esac
