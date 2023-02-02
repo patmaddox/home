@@ -1,0 +1,37 @@
+#!/bin/sh
+command=$1
+shift 1
+
+socket=$SSH_AUTH_SOCK
+agent=$(ps ax | grep "ssh-agent -a $socket" | grep -v grep)
+agent_exit=$?
+
+if [ -z $socket ]; then
+    echo "No SSH_AUTH_SOCK set"
+    exit 1
+fi
+
+case $command in
+    start)
+	if [ ! -S $socket ]; then
+	    ssh-agent -a $socket > /dev/null
+	fi
+	;;
+    stop)
+	if [ -S $socket ]; then
+	    if [ $agent_exit -eq 0 ]; then
+		agent_pid=$(echo $agent | awk '{print $1}')
+		SSH_AGENT_PID=$agent_pid ssh-agent -k > /dev/null
+	    fi
+	fi
+	;;
+    status)
+	if [ $agent_exit -eq 0 ]; then
+	    echo "ssh-agent is running."
+	else
+	    echo "ssh-agent is not running."
+	fi
+	;;
+    *)
+	echo "Usage: ssh-agentd start|stop|status"
+esac
