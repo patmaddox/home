@@ -4,6 +4,10 @@ help:
 gce-build-image:
   poudriere image -t zfs+gpt -j 13_1 -h freebsd-gce -s 2G -n 131gce -c gce/overlay -f gce/packages -B poudriere/pre.sh
 
+# TODO: Don't use overlay, but instead have host copy images from a /config dataset
+gce-build-be:
+  poudriere image -t zfs+send+be -j 13_1 -s 2G -f gce/packages -n 131gcebe -c gce/overlay
+
 gce-prepare-image:
   cd /usr/local/poudriere/data/images && mv 131gce.img disk.raw
   cd /usr/local/poudriere/data/images && tar --format=gnutar -zcf 131gce-$(date "+%Y%m%d%H%M%S").tar.gz disk.raw
