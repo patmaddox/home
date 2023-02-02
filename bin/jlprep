@@ -31,9 +31,8 @@ $sysrc devfs_load_rulesets="YES"
 mkdir -p ${jail}/usr/local/etc/pkg/repos
 echo 'FreeBSD: { enabled: no }' > ${jail}/usr/local/etc/pkg/repos/FreeBSD.conf
 echo 'poudriere: { url: "http://192.168.2.1", enabled: yes }' > ${jail}/usr/local/etc/pkg/repos/poudriere.conf
-if [ ! -f ${jail}/etc/resolv.conf ]; then
-    cat > ${jail}/etc/resolv.conf << EOF
+
+cat > ${jail}/etc/resolv.conf << EOF
 nameserver 8.8.8.8
 nameserver 8.8.4.4
 EOF
-fi
