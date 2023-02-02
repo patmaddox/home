@@ -1,4 +1,5 @@
 net/google-cloud-sdk
 security/sudo
+security/tailscale
 sysutils/firstboot-freebsd-update
 sysutils/py-google-compute-engine

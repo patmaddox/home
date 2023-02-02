@@ -1,14 +1,22 @@
 help:
   @just -l
 
-build-gce-image:
-  poudriere image -t zfs+gpt -j 13_1 -h freebsd-gce -s 2G -n 131gce -c gce/overlay -f gce/packages
+gce-build-image:
+  poudriere image -t zfs+gpt -j 13_1 -h freebsd-gce -s 2G -n 131gce -c gce/overlay -f gce/packages -B poudriere/pre.sh
 
-build-gce-packages:
+gce-prepare-image:
+  cd /usr/local/poudriere/data/images && mv 131gce.img disk.raw
+  cd /usr/local/poudriere/data/images && tar --format=gnutar -zcf 131gce-$(date "+%Y%m%d%H%M%S").tar.gz disk.raw
+
+gce-create-image:
+  @echo "Example:"
+  @echo "gcloud compute images create myimage --guest-os-features=UEFI_COMPATIBLE --source-uri=gs://mybucket/myimage.tar.gz"
+
+gce-build-packages:
   poudriere bulk -j 13_1 -f gce/packages
 
-build-ec2-image:
-  poudriere image -t zfs+gpt -j 13_1 -h freebsd-ec2 -s 2G -n 131ec2 -c ec2/overlay -f ec2/packages
+ec2-build-image:
+  poudriere image -t zfs+gpt -j 13_1 -h freebsd-ec2 -s 2G -n 131ec2 -c ec2/overlay -f ec2/packages  -B poudriere/pre.sh
 
-build-ec2-packages:
+ec2-build-packages:
   poudriere bulk -j 13_1 -f ec2/packages

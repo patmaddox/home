@@ -1,5 +1,6 @@
 devel/py-awscli
 net/isc-dhcp44-client
+security/tailscale
 sysutils/amazon-ssm-agent
 sysutils/ebsnvme-id
 sysutils/ec2-scripts
