@@ -8,7 +8,7 @@ build-dev:
   poudriere bulk -j 13_1 -O local -C -f dev -b latest
 
 outdated:
-  poudriere bulk -j 13_1 -O local -f to-build -n
+  poudriere bulk -j 13_1 -O local -f prod -n
 
 update:
   poudriere ports -u
