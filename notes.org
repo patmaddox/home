@@ -8,3 +8,7 @@
 - Create a snapshot: `aws ec2 import-snapshot --disk-container Format=raw,Url=s3://mybucket/myimage.img`
 - Make an AMI (use UEFI boot)
   I used console, need to figure out command line
+* Disable ssh-agent in xfce4
+`xfconf-query -c xfce4-session -p /startup/ssh-agent/enabled -n -t bool -s false`
+
+from https://notebook.niklaas.eu/xfce-disable-ssh-agent/
