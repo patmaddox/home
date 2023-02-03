@@ -14,7 +14,7 @@ _check_jail_env_root()
     fi
 }
 
-_check_jail_envs()
+_check_jail_env_mountpoints()
 {
     jailenvs=$(zfs get -H -r -t filesystem mountpoint $JAILENV_ROOT | grep -e "^${JAILENV_ROOT}/")
 
@@ -24,6 +24,20 @@ _check_jail_envs()
 
 	if [ $mountpoint != $JROOT ]; then
 	    echo "$jail_env $mountpoint"
+	fi
+    done
+}
+
+_check_jail_env_canmounts()
+{
+    jailenvs=$(zfs get -H -r -t filesystem canmount $JAILENV_ROOT | grep -e "^${JAILENV_ROOT}/")
+
+    echo "$jailenvs" | while read line; do
+	canmount=$(echo $line | awk '{print $3}')
+	jail_env=$(echo $line | awk '{print $1}')
+
+	if [ $canmount != "noauto" ]; then
+	    echo "$jail_env $canmount"
 	fi
     done
 }
@@ -65,12 +79,21 @@ _check()
 	echo "Error: $JAILENV_ROOT has mountpoint=$jail_env_root, but should be none"
     fi
 
-    jail_envs=$(_check_jail_envs)
+    jail_envs=$(_check_jail_env_mountpoints)
     if [ "$jail_envs" ]; then
 	echo "$jail_envs" | while read line; do
 	    jenv=$(echo $line | awk '{print $1}')
 	    mountpoint=$(echo $line | awk '{print $2}')
 	    echo "Error: $jenv has mountpoint=${mountpoint}, but it should match $DATASET ($JROOT)"
+	done
+    fi
+
+    jail_envs=$(_check_jail_env_canmounts)
+    if [ "$jail_envs" ]; then
+	echo "$jail_envs" | while read line; do
+	    jenv=$(echo $line | awk '{print $1}')
+	    canmount=$(echo $line | awk '{print $2}')
+	    echo "Error: $jenv has canmount=${canmount}, but it should be noauto"
 	done
     fi
 
@@ -97,11 +120,19 @@ _recover()
 	zfs set mountpoint=none $JAILENV_ROOT
     fi
 
-    jail_envs=$(_check_jail_envs)
+    jail_envs=$(_check_jail_env_mountpoints)
     if [ "$jail_envs" ]; then
 	echo "$jail_envs" | while read line; do
 	    jenv=$(echo $line | awk '{print $1}')
 	    zfs set mountpoint=$JROOT $jenv
+	done
+    fi
+
+    jail_envs=$(_check_jail_env_canmounts)
+    if [ "$jail_envs" ]; then
+	echo "$jail_envs" | while read line; do
+	    jenv=$(echo $line | awk '{print $1}')
+	    zfs set canmount=noauto $jenv
 	done
     fi
 
