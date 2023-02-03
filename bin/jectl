@@ -1,0 +1,92 @@
+#!/bin/sh
+DATASET=$1
+command=$2
+shift 2
+
+JROOT=$(zfs get -H mountpoint $DATASET | awk '{print $3}')
+JAILENV_ROOT=$DATASET/ROOT #$(zfs get -H -t filesystem mountpoint $DATASET/ROOT)
+
+_check_jail_env_root()
+{
+    mountpoint=$(zfs get -H mountpoint $JAILENV_ROOT | awk '{print $3}')
+    if [ $mountpoint != "none" ]; then
+	echo $mountpoint
+    fi
+}
+
+_check_jail_envs()
+{
+    jailenvs=$(zfs get -H -r -t filesystem mountpoint $JAILENV_ROOT | grep -e "^${JAILENV_ROOT}/")
+
+    echo "$jailenvs" | while read line; do
+	mountpoint=$(echo $line | awk '{print $3}')
+	jail_env=$(echo $line | awk '{print $1}')
+
+	if [ $mountpoint != $JROOT ]; then
+	    echo "$jail_env $mountpoint"
+	fi
+    done
+}
+
+_check_children()
+{
+    children=$(zfs get -H -r -t filesystem mountpoint $DATASET | grep -v $JAILENV_ROOT)
+
+    echo "$children" | while read line; do
+	mountpoint=$(echo $line | awk '{print $3}')
+	childset=$(echo $line | awk '{print $1}')
+
+	echo $mountpoint | grep -e "^${JROOT}/" > /dev/null
+	starts_with=$?
+
+	if [ $childset != $DATASET -a $starts_with -ne 0 -a $mountpoint != "none" ]; then
+	    echo "$childset $mountpoint"
+	fi
+    done
+}
+
+_check_root()
+{
+    if [ $JROOT = "/" -o $JROOT = "none" ]; then
+	return 1
+    fi
+    return 0
+}
+
+
+case $command in
+    check)
+	_check_root
+	if [ $? -ne 0 ]; then
+	    echo "Error: $DATASET mountpoint is $JROOT"
+	fi
+
+	jail_env_root=$(_check_jail_env_root)
+	if [ "$jail_env_root" ]; then
+	    echo "Error: $JAIL_ENV_ROOT mountpoint is $jail_env_root, but should be none"
+	fi
+
+	jail_envs=$(_check_jail_envs)
+	if [ "$jail_envs" ]; then
+	    echo "$jail_envs" | while read line; do
+		jenv=$(echo $line | awk '{print $1}')
+		mountpoint=$(echo $line | awk '{print $2}')
+		echo "Error: $jenv has mountpoint=${mountpoint}, but it should match $DATASET ($JROOT)"
+	    done
+	fi
+
+	children=$(_check_children)
+	if [ "$children" ]; then
+	    echo "$children" | while read line; do
+		childset=$(echo $line | awk '{print $1}')
+		mountpoint=$(echo $line | awk '{print $2}')
+		echo "Error: $childset has mountpoint=${mountpoint}, but should be under $JROOT (or none)"
+	    done
+	fi
+	;;
+
+    recover)
+	;;
+    *)
+	echo "Usage: jectl jail-dataset verify"
+esac
