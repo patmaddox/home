@@ -118,13 +118,36 @@ _list()
 {
     jailenvs=$(zfs list -H -t filesystem -r $JAILENV_ROOT | grep -e "^${JAILENV_ROOT}/" | awk '{print $1}' | sed -e "s|${JAILENV_ROOT}/||")
     echo "$jailenvs" | while read line; do
-	active=$(zfs get jectl:active $JAILENV_ROOT/$line | awk '{print $3}')
+	active=$(zfs get -H jectl:active $JAILENV_ROOT/$line | awk '{print $3}')
 	if [ "$active" = "on" ]; then
 	   echo "$line *"
 	else
 	    echo $line
 	fi
     done
+}
+
+_activate()
+{
+    dataset="$JAILENV_ROOT/$1"
+    zfs list $dataset > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	echo "Error locating $dataset"
+	exit 1
+    fi
+
+    jailenvs=$(zfs list -H -t filesystem -r $JAILENV_ROOT | grep -e "^${JAILENV_ROOT}/" | awk '{print $1}' | sed -e "s|${JAILENV_ROOT}/||")
+    echo "$jailenvs" | while read line; do
+	zfs inherit jectl:active $JAILENV_ROOT/$line
+    done
+    zfs set jectl:active=on $JAILENV_ROOT/$1
+}
+
+_usage()
+{
+    echo "Usage:"
+    echo "  jectl jail-dataset activate je"
+    echo "  jectl jail-dataset check|recover|list"
 }
 
 case $command in
@@ -138,7 +161,21 @@ case $command in
     list)
 	_list
 	;;
+    activate)
+	if [ $# -ne 1 ]; then
+	    _usage
+	    exit 1
+	fi
+
+	check_results=$(_check)
+	if [ "$check_results" ]; then
+	    echo "$check_results"
+	    exit 1
+	fi
+
+	_activate $1
+	;;
     *)
-	echo "Usage: jectl jail-dataset check|recover"
+	_usage
 	;;
 esac
