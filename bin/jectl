@@ -63,7 +63,7 @@ case $command in
 
 	jail_env_root=$(_check_jail_env_root)
 	if [ "$jail_env_root" ]; then
-	    echo "Error: $JAIL_ENV_ROOT mountpoint is $jail_env_root, but should be none"
+	    echo "Error: $JAILENV_ROOT has mountpoint=$jail_env_root, but should be none"
 	fi
 
 	jail_envs=$(_check_jail_envs)
@@ -86,7 +86,33 @@ case $command in
 	;;
 
     recover)
+	_check_root
+	if [ $? -ne 0 ]; then
+	    echo "Can't recover: $DATASET mountpoint is $JROOT"
+	    exit 1
+	fi
+
+	jail_env_root=$(_check_jail_env_root)
+	if [ "$jail_env_root" ]; then
+	    zfs set mountpoint=none $JAILENV_ROOT
+	fi
+
+	jail_envs=$(_check_jail_envs)
+	if [ "$jail_envs" ]; then
+	    echo "$jail_envs" | while read line; do
+		jenv=$(echo $line | awk '{print $1}')
+		zfs set mountpoint=$JROOT $jenv
+	    done
+	fi
+
+	children=$(_check_children)
+	if [ "$children" ]; then
+	    echo "$children" | while read line; do
+		childset=$(echo $line | awk '{print $1}')
+		zfs inherit mountpoint $childset
+	    done
+	fi
 	;;
     *)
-	echo "Usage: jectl jail-dataset verify"
+	echo "Usage: jectl jail-dataset check|recover"
 esac
