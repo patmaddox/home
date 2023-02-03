@@ -29,4 +29,4 @@ jail-build-image:
   poudriere image -t zfs+send -j 13_1 -h freebsd-jail -B poudriere/pre.sh -s 2G -n jail
 
 jail-build-je:
-  poudriere image -t zfs+send+be -j 13_1 -s 2G -n 131je
+  poudriere image -t zfs+send+be -j 13_1 -s 2G -n 131je -f just-emacs
