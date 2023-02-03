@@ -53,66 +53,92 @@ _check_root()
     return 0
 }
 
+_check()
+{
+    _check_root
+    if [ $? -ne 0 ]; then
+	echo "Error: $DATASET mountpoint is $JROOT"
+    fi
+
+    jail_env_root=$(_check_jail_env_root)
+    if [ "$jail_env_root" ]; then
+	echo "Error: $JAILENV_ROOT has mountpoint=$jail_env_root, but should be none"
+    fi
+
+    jail_envs=$(_check_jail_envs)
+    if [ "$jail_envs" ]; then
+	echo "$jail_envs" | while read line; do
+	    jenv=$(echo $line | awk '{print $1}')
+	    mountpoint=$(echo $line | awk '{print $2}')
+	    echo "Error: $jenv has mountpoint=${mountpoint}, but it should match $DATASET ($JROOT)"
+	done
+    fi
+
+    children=$(_check_children)
+    if [ "$children" ]; then
+	echo "$children" | while read line; do
+	    childset=$(echo $line | awk '{print $1}')
+	    mountpoint=$(echo $line | awk '{print $2}')
+	    echo "Error: $childset has mountpoint=${mountpoint}, but should be under $JROOT (or none)"
+	done
+    fi
+}
+
+_recover()
+{
+    _check_root
+    if [ $? -ne 0 ]; then
+	echo "Can't recover: $DATASET mountpoint is $JROOT"
+	exit 1
+    fi
+
+    jail_env_root=$(_check_jail_env_root)
+    if [ "$jail_env_root" ]; then
+	zfs set mountpoint=none $JAILENV_ROOT
+    fi
+
+    jail_envs=$(_check_jail_envs)
+    if [ "$jail_envs" ]; then
+	echo "$jail_envs" | while read line; do
+	    jenv=$(echo $line | awk '{print $1}')
+	    zfs set mountpoint=$JROOT $jenv
+	done
+    fi
+
+    children=$(_check_children)
+    if [ "$children" ]; then
+	echo "$children" | while read line; do
+	    childset=$(echo $line | awk '{print $1}')
+	    zfs inherit mountpoint $childset
+	done
+    fi
+}
+
+_list()
+{
+    jailenvs=$(zfs list -H -t filesystem -r $JAILENV_ROOT | grep -e "^${JAILENV_ROOT}/" | awk '{print $1}' | sed -e "s|${JAILENV_ROOT}/||")
+    echo "$jailenvs" | while read line; do
+	active=$(zfs get jectl:active $JAILENV_ROOT/$line | awk '{print $3}')
+	if [ "$active" = "on" ]; then
+	   echo "$line *"
+	else
+	    echo $line
+	fi
+    done
+}
 
 case $command in
     check)
-	_check_root
-	if [ $? -ne 0 ]; then
-	    echo "Error: $DATASET mountpoint is $JROOT"
-	fi
-
-	jail_env_root=$(_check_jail_env_root)
-	if [ "$jail_env_root" ]; then
-	    echo "Error: $JAILENV_ROOT has mountpoint=$jail_env_root, but should be none"
-	fi
-
-	jail_envs=$(_check_jail_envs)
-	if [ "$jail_envs" ]; then
-	    echo "$jail_envs" | while read line; do
-		jenv=$(echo $line | awk '{print $1}')
-		mountpoint=$(echo $line | awk '{print $2}')
-		echo "Error: $jenv has mountpoint=${mountpoint}, but it should match $DATASET ($JROOT)"
-	    done
-	fi
-
-	children=$(_check_children)
-	if [ "$children" ]; then
-	    echo "$children" | while read line; do
-		childset=$(echo $line | awk '{print $1}')
-		mountpoint=$(echo $line | awk '{print $2}')
-		echo "Error: $childset has mountpoint=${mountpoint}, but should be under $JROOT (or none)"
-	    done
-	fi
+	_check
 	;;
 
     recover)
-	_check_root
-	if [ $? -ne 0 ]; then
-	    echo "Can't recover: $DATASET mountpoint is $JROOT"
-	    exit 1
-	fi
-
-	jail_env_root=$(_check_jail_env_root)
-	if [ "$jail_env_root" ]; then
-	    zfs set mountpoint=none $JAILENV_ROOT
-	fi
-
-	jail_envs=$(_check_jail_envs)
-	if [ "$jail_envs" ]; then
-	    echo "$jail_envs" | while read line; do
-		jenv=$(echo $line | awk '{print $1}')
-		zfs set mountpoint=$JROOT $jenv
-	    done
-	fi
-
-	children=$(_check_children)
-	if [ "$children" ]; then
-	    echo "$children" | while read line; do
-		childset=$(echo $line | awk '{print $1}')
-		zfs inherit mountpoint $childset
-	    done
-	fi
+	_recover
+	;;
+    list)
+	_list
 	;;
     *)
 	echo "Usage: jectl jail-dataset check|recover"
+	;;
 esac
