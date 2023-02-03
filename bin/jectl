@@ -143,11 +143,24 @@ _activate()
     zfs set jectl:active=on $JAILENV_ROOT/$1
 }
 
+_boot()
+{
+    active=$(zfs get -H -t filesystem -r jectl:active $JAILENV_ROOT | grep -e "^${JAILENV_ROOT}/" | grep -e "[[:space:]]on[[:space:]]" | awk '{print $1}')
+    mounted=$(zfs mount | grep -e "[[:space:]]${JROOT}$" | awk '{print $1}')
+    if [ "$mounted" -a "$active" = "mounted" ]; then
+    elif [ "$mounted" -a "$active" != "$mounted" ]; then
+	zfs unmount $JROOT
+	zfs mount $active
+    else
+	zfs mount $active
+    fi
+}
+
 _usage()
 {
     echo "Usage:"
     echo "  jectl jail-dataset activate je"
-    echo "  jectl jail-dataset check|recover|list"
+    echo "  jectl jail-dataset check|recover|list|boot"
 }
 
 case $command in
@@ -174,6 +187,9 @@ case $command in
 	fi
 
 	_activate $1
+	;;
+    boot)
+	_boot
 	;;
     *)
 	_usage
