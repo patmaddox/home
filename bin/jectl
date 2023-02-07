@@ -178,7 +178,7 @@ _boot()
 {
     active=$(zfs get -H -t filesystem -r jectl:active $JAILENV_ROOT | grep -e "^${JAILENV_ROOT}/" | grep -e "[[:space:]]on[[:space:]]" | awk '{print $1}')
     mounted=$(zfs mount | grep -e "[[:space:]]${JROOT}$" | awk '{print $1}')
-    if [ "$mounted" -a "$active" = "mounted" ]; then
+    if [ "$mounted" -a "$active" = "$mounted" ]; then
     elif [ "$mounted" -a "$active" != "$mounted" ]; then
 	zfs unmount $JROOT
 	zfs mount $active
