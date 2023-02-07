@@ -1,2 +1,6 @@
 #!/bin/sh
+if [ ! -S /jails/archie/tmp/.X11-unix/X0 ]; then
+    mount_nullfs -o ro /tmp/.X11-unix /jails/archie/tmp/.X11-unix
+fi
+xhost +
 doas jexec -l archie login -f patmaddox

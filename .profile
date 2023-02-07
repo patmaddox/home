@@ -30,3 +30,8 @@ if [ -x /usr/bin/resizewin ] ; then /usr/bin/resizewin -z ; fi
 if [ -x /usr/bin/fortune ] ; then /usr/bin/fortune freebsd-tips ; fi
 
 export SSH_AUTH_SOCK=/tmp/ssh-$USER
+
+if [ -S /tmp/.X11-unix/X0 ]; then
+    DISPLAY=${DISPLAY:=":0.0"}
+    export DISPLAY
+fi
