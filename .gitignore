@@ -17,6 +17,7 @@
 /.mozilla
 /.serverauth.*
 /.ssh
+/Downloads
 /oss
 /priv
 /ratio
