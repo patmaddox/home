@@ -2,11 +2,11 @@ help:
   @just -l
 
 gce-build-image:
-  poudriere image -t zfs+gpt -j 13_1 -h freebsd-gce -s 2G -n 131gce -c gce/overlay -f gce/packages -B poudriere/pre.sh
+  poudriere image -t zfs+gpt -j 13_1 -h freebsd-gce -s 2G -n 131gce -c gce/overlay -f gce/packages -B poudriere-image/pre.sh
 
 # TODO: Don't use overlay, but instead have host copy images from a /config dataset
 gce-build-be:
-  poudriere image -t zfs+send+be -j 13_1 -s 2G -f gce/packages -n 131gcebe -c gce/overlay
+  poudriere image -t zfs+send+be -j 13_1 -s 2G -f gce/packages -n 131gcebe -c gce/overlay -A poudriere-image/post.sh
 
 gce-prepare-image:
   cd /usr/local/poudriere/data/images && mv 131gce.img disk.raw
@@ -20,13 +20,13 @@ gce-build-packages:
   poudriere bulk -j 13_1 -f gce/packages
 
 ec2-build-image:
-  poudriere image -t zfs+gpt -j 13_1 -h freebsd-ec2 -s 2G -n 131ec2 -c ec2/overlay -f ec2/packages  -B poudriere/pre.sh
+  poudriere image -t zfs+gpt -j 13_1 -h freebsd-ec2 -s 2G -n 131ec2 -c ec2/overlay -f ec2/packages  -B poudriere-image/pre.sh
 
 ec2-build-packages:
   poudriere bulk -j 13_1 -f ec2/packages
 
 jail-build-image:
-  poudriere image -t zfs+send -j 13_1 -h freebsd-jail -B poudriere/pre.sh -s 2G -n jail
+  poudriere image -t zfs+send -j 13_1 -h freebsd-jail -B poudriere-image/pre.sh -s 2G -n jail
 
 jail-build-je:
   poudriere image -t zfs+send+be -j 13_1 -s 2G -n 131je -f just-emacs
