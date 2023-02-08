@@ -6,10 +6,11 @@ devel/git
 devel/gmake
 editors/emacs
 editors/emacs@nox
-#editors/vscode
+editors/vscode
 lang/elixir-devel
 lang/erlang-runtime24
 lang/erlang-runtime25
+misc/freebsd-release-manifests
 multimedia/webcamd
 net-mgmt/alertmanager
 net-mgmt/prometheus2

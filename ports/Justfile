@@ -2,7 +2,7 @@ help:
   @just -l
 
 build-prod:
-  poudriere bulk -j 13_1 -f prod -b latest
+  poudriere bulk -j 13_1 -O local -f prod -b latest -v
 
 build-dev:
   poudriere bulk -j 13_1 -O local -C -f dev -b latest
