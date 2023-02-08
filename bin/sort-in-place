@@ -1,0 +1,12 @@
+#!/bin/sh
+FILE=$1
+
+if [ ! -f $FILE ]; then
+    echo "Usage: sort-in-place <file>"
+    exit 1
+fi
+
+TMPFILE=mktemp || exit 1
+cat $FILE | sort > $TMPFILE
+cat $TMPFILE > $FILE
+rm $TMPFILE
