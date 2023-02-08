@@ -17,13 +17,13 @@ gce-create-image:
   @echo "gcloud compute images create myimage --guest-os-features=UEFI_COMPATIBLE --source-uri=gs://mybucket/myimage.tar.gz"
 
 gce-build-packages:
-  poudriere bulk -j 13_1 -f gce/packages
+  poudriere bulk -j 13_1 -f gce/packages -b latest
 
 ec2-build-image:
   poudriere image -t zfs+gpt -j 13_1 -h freebsd-ec2 -s 2G -n 131ec2 -c ec2/overlay -f ec2/packages  -B poudriere-image/pre.sh
 
 ec2-build-packages:
-  poudriere bulk -j 13_1 -f ec2/packages
+  poudriere bulk -j 13_1 -f ec2/packages -b latest
 
 jail-build-image:
   poudriere image -t zfs+send -j 13_1 -h freebsd-jail -B poudriere-image/pre.sh -s 2G -n jail
