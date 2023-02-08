@@ -12,6 +12,7 @@
 /.emacs.d/tramp
 /.emacs.d/transient
 /.hex
+/.lesshst
 /.local
 /.mix
 /.mozilla
