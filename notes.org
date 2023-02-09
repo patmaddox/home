@@ -12,3 +12,8 @@
 `xfconf-query -c xfce4-session -p /startup/ssh-agent/enabled -n -t bool -s false`
 
 from https://notebook.niklaas.eu/xfce-disable-ssh-agent/
+* Add FreeBSD package categories
+In make.conf:
+VALID_CATEGORIES+= my_category
+
+/usr/local/etc/poudriere.d/make.conf (or more specific conf files)
