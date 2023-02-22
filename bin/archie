@@ -1,6 +1,13 @@
 #!/bin/sh
+if [ $(who am i | awk '{print $1}') = "root" ]; then
+    echo "Don't run as root!"
+    exit 1
+fi
+
 if [ ! -S /jails/archie/tmp/.X11-unix/X0 ]; then
-    mount_nullfs -o ro /tmp/.X11-unix /jails/archie/tmp/.X11-unix
+    doas mount_nullfs -o ro /tmp/.X11-unix /jails/archie/tmp/.X11-unix
 fi
 xhost +
+
+doas service jail onestatus archie | grep archie || doas service jail onestart archie
 doas jexec -l archie login -f patmaddox
