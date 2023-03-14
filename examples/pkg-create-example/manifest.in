@@ -1,0 +1,8 @@
+name: pkg-create-example
+version: %%VERSION%%
+origin: devel/pkg-create-example
+comment: Example demonstrating how to create a package using pkg-create(8)
+www: https://github.com/patmaddox/home/tree/main/examples/pkg-create-example
+maintainer: pat@patmaddox.com
+prefix: %%PREFIX%%
+desc: Example demonstrating how to create a package using pkg-create(8)
