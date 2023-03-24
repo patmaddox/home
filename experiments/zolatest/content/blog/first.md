@@ -1,6 +1,6 @@
 +++
 title = "First blog post"
-date = 2023-03-23
+date = 2023-03-22
 +++
 
 This is my first blog post.
