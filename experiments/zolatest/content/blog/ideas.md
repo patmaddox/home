@@ -27,3 +27,9 @@ Everything else works great so far though, so I will most likely keep it.
 I wonder if it's possible to get a new panel?
 Also I need to figure out how to disable / soften the beep.
 It's loud and stupid.
+
+## git commit prefix
+
+The FreeBSD monorepos use a prefix to indicate which subsystem a commit refers to.
+I've been doing the same thing with my monorepo.
+I wonder if I could script it?
