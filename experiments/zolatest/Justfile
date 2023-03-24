@@ -1,0 +1,5 @@
+help:
+  @just -l
+
+serve:
+  zola serve
