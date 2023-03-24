@@ -3,6 +3,10 @@
 {% block content %}
 <h1>My Zola Test Index</h1>
 <p>
-  This is my Zola test. <a href="https://www.getzola.org/documentation/themes/installing-and-using-themes/">Zola themes documentation</a>
+  This is my Zola test.
+  I have a <a href="{{ get_url(path='@/blog/_index.md') }}">blog</a>.
+</p>
+<p>
+  <a href="https://www.getzola.org/documentation/themes/installing-and-using-themes/">Zola themes documentation</a>
 </p>
 {% endblock content %}
