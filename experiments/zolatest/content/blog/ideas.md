@@ -16,3 +16,14 @@ It will print out the main commands I need to know.
 I don't need a README just to get going.
 
 Comes from the git idea of plumbing and porcelain.
+
+## Thinkpad E495
+
+I really like it so far.
+The only thing I don't like is the screen isn't bright enough for me.
+I don't know if that's a limitation of the screen, or if FreeBSD isn't configured correctly.
+I believe I have it at 100% brightness, and it's just a tad dim.
+Everything else works great so far though, so I will most likely keep it.
+I wonder if it's possible to get a new panel?
+Also I need to figure out how to disable / soften the beep.
+It's loud and stupid.
