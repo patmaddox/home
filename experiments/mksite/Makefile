@@ -1,4 +1,4 @@
-INFILES != find src -type f
+INFILES != find src -type f -not -name '*~'
 
 all:
 
@@ -9,7 +9,7 @@ clean:
 out_${f} != ./bin/getoutpath.sh ${f}
 
 ${out_${f}}: out ${f}
-	cp ${f} ${.TARGET}
+	cat ${f} | sed -E -e '/---/,/---/d' | markdown -o ${.TARGET}
 
 all: ${out_${f}}
 .endfor

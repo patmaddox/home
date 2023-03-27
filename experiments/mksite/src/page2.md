@@ -6,3 +6,5 @@ path: mypage2
 
 This page has a different path.
 It is set in Markdown frontmatter.
+
+It links to [page 1](page1.html).
