@@ -9,8 +9,12 @@ fi
 
 fmpath=$(sed -n '/---/,/---/p' $file | grep '^path:' | sed -e 's/^path: //')
 
+dir=$(echo $file | sed -e 's|^src/|out/|' | xargs dirname)
+base=$(basename $file)
+
 if [ -z $fmpath ]; then
-    outpath=$(echo $file | sed -e 's|^src/|out/|' -e 's/.md$//')
+    file=$(echo $base | sed -e 's/^[[:digit:]]*-//' -e 's/.md$//')
+    outpath=${dir}/${file}
 else
     outpath=out/${fmpath}
 fi
