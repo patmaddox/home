@@ -7,6 +7,9 @@ all:
 clean:
 	rm -rf out paths
 
+paths: .EXEC
+paths: paths/paths.sql
+
 paths/paths.sql:
 	@mkdir -p paths
 	@sqlite3 paths/paths.sql 'create table paths(id int primary key not null, path string unique not null)'
@@ -14,15 +17,15 @@ paths/paths.sql:
 .for f in ${INFILES}
 out_${f} != ./bin/getoutpath.sh ${f}
 
-${out_${f}}: paths/paths.sql ${f}
+${out_${f}}: paths paths/${f} ${f}
 	./bin/export.sh ${f} ${.TARGET}
 
 all: ${out_${f}}
 
-paths/${f}: .USE
+paths/${f}: ${f}
 	@if [ ! -d ${.TARGET:H} ]; then mkdir -p ${.TARGET:H}; fi
-	@./bin/insertpath.sh ${f}
-	touch ${.TARGET}
+	@./bin/upsertpath.sh ${f}
+	@touch ${.TARGET}
 
-paths/paths.sql: paths/${f}
+paths: paths/${f}
 .endfor
