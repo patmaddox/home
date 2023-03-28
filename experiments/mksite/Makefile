@@ -1,6 +1,6 @@
 INFILES != find src -type f -not -name '*~'
 
-.PHONY: all clean paths
+.PHONY: all clean
 
 all:
 
@@ -14,19 +14,15 @@ paths/paths.sql:
 .for f in ${INFILES}
 out_${f} != ./bin/getoutpath.sh ${f}
 
-${out_${f}}: paths out ${f}
+${out_${f}}: paths/paths.sql ${f}
 	./bin/export.sh ${f} ${.TARGET}
 
 all: ${out_${f}}
 
-paths/${f}: paths/paths.sql
+paths/${f}: .USE
 	@if [ ! -d ${.TARGET:H} ]; then mkdir -p ${.TARGET:H}; fi
 	@./bin/insertpath.sh ${f}
-	@touch ${.TARGET}
+	touch ${.TARGET}
 
-paths: paths/${f}
+paths/paths.sql: paths/${f}
 .endfor
-
-
-out:
-	@mkdir out
