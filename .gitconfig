@@ -3,3 +3,5 @@
 [user]
 	name = Pat Maddox
 	email = pat@patmaddox.com
+[merge]
+	ff = only
