@@ -30,4 +30,8 @@ paths/${f}: ${f}
 	@touch ${.TARGET}
 
 paths: paths/${f}
+
+.for l in ${:! ./bin/getlinks.sh $f !}
+${out_${f}}: $l
+.endfor
 .endfor
