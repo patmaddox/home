@@ -7,6 +7,8 @@ all:
 clean:
 	rm -rf out paths
 
+rebuild: clean .WAIT all
+
 paths: .EXEC
 paths: paths/paths.sql
 
