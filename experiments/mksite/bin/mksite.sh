@@ -1,8 +1,5 @@
 #!/bin/sh
 
-set -e
-set -o pipefail
-
 mksite_export()
 {
     mypath=$(mksite_getoutpath ${1})
@@ -30,18 +27,14 @@ mksite_getid()
 mksite_getlinks()
 {
     file=$1
-    links=$(grep -o "(%$(mksite_getid $file)%)" -rl src)
+    links=$(grep -o '(%[[:digit:]]*%)' $file | sort -u | grep -o '[[:digit:]]*' | xargs -I {} -n 1 find src -type f -name '{}-*')
     echo "$links"
 }
 
 mksite_getoutpath()
 {
     file=$1
-
-    set +e
     fmpath=$(sed -n '/---/,/---/p' $file | grep '^path:' | sed -e 's/^path: //')
-    set -e
-
     dir=$(echo $file | sed -e 's|^src/|out/|' | xargs dirname)
     base=$(basename $file)
 
