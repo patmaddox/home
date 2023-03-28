@@ -17,7 +17,7 @@ all: paths ${out_${f}}
 
 paths/${f}:
 	@if [ ! -d ${.TARGET:H} ]; then mkdir -p ${.TARGET:H}; fi
-	./bin/getoutpath.sh ${f} > ${.TARGET}
+	@./bin/getoutpath.sh ${f} > ${.TARGET}
 
 paths: paths/${f}
 .endfor
