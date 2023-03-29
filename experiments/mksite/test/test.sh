@@ -48,12 +48,25 @@ test_basic_link_body() {
     atf_check -s exit:0 -o match:'<a href="bar.html">link to bar</a>' -x "cat $(atf_get_srcdir)/test_basic_link/out/foo.html"
 }
 
+## relative link
+atf_test_case test_relative_link
+
+test_relative_link_head() {
+}
+
+test_relative_link_body() {
+    copy_mksite test_relative_link
+    atf_check -s exit:0 -o ignore -x "make -C $(atf_get_srcdir)/test_relative_link"
+    atf_check -s exit:0 -o match:'<a href="../bar.html">link to bar</a>' -x "cat $(atf_get_srcdir)/test_relative_link/out/subdir/foo.html"
+}
+
 ## test cases
 atf_init_test_cases() {
     atf_add_test_case test_basic
     atf_add_test_case test_no_id
     atf_add_test_case test_custom_path
     atf_add_test_case test_basic_link
+    atf_add_test_case test_relative_link
 }
 
 ## helpers
