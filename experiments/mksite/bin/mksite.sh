@@ -20,8 +20,10 @@ mksite_export()
 
 mksite_getid()
 {
-    id=$(basename $1 | sed 's/^\([[:digit:]]*\)-.*/\1/')
-    echo $id
+    id=$(basename $1 | sed -n 's/^\([[:digit:]]*\)-.*/\1/p')
+    if [ -n "$id" ]; then
+	echo $id
+    fi
 }
 
 mksite_getlinks()
@@ -90,7 +92,12 @@ mksite_upsertpath()
     id=$(mksite_getid $1)
     path=$(mksite_getoutpath $1)
 
-    sqlite3 -cmd '.timeout 100' paths/paths.sql "insert into paths values($id, '$path') on conflict(id) do update set path='$path'"
+    if [ -n "$id" ]; then
+	sqlite3 -cmd '.timeout 100' paths/paths.sql "insert into paths values($id, '$path') on conflict(id) do update set path='$path'"
+    else
+	echo "$1 has no id" > /dev/stderr
+	exit 1
+    fi
 }
 
 cmd=$1
