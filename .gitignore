@@ -13,6 +13,7 @@
 /.emacs.d/tramp
 /.emacs.d/transient
 /.hex
+/.kyua
 /.lesshst
 /.local
 /.mix
