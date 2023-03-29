@@ -1,0 +1,5 @@
+syntax(2)
+
+test_suite('mksite')
+
+atf_test_program{name='test.sh'}
