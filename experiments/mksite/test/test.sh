@@ -24,10 +24,23 @@ test_no_id_body() {
     atf_check -x "test ! -f $(atf_get_srcdir)/test_no_id/out/no-id.html"
 }
 
+## custom_path
+atf_test_case test_custom_path
+
+test_custom_path_head() {
+}
+
+test_custom_path_body() {
+    copy_mksite test_custom_path
+    atf_check -s exit:0 -o ignore -x "make -C $(atf_get_srcdir)/test_custom_path"
+    atf_check -s exit:0 -o match:'<h1>Hello World</h1>' -o not-match:'foo' -x "cat $(atf_get_srcdir)/test_custom_path/out/foo/bar/baz.html"
+}
+
 ## test cases
 atf_init_test_cases() {
     atf_add_test_case test_basic
     atf_add_test_case test_no_id
+    atf_add_test_case test_custom_path
 }
 
 ## helpers
