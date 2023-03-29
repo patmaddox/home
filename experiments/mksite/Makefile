@@ -1,6 +1,6 @@
 INFILES != find src -type f -name '*.md'
 
-.PHONY: all clean rebuild
+.PHONY: all clean rebuild test
 .MAIN: all
 
 all:
@@ -22,3 +22,6 @@ all: ${out_${f}}
 $l: $f
 .endfor
 .endfor
+
+make test:
+	cd test && kyua test
