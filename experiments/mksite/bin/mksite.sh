@@ -10,7 +10,8 @@ mksite_export()
     replace="-e '/^---$/,/^---$/d'"
 
     for id in $ids; do
-	path=$(mksite_selectpath $id)
+	file=$(find src -name "${id}-*.md")
+	path=$(mksite_getoutpath $file)
 	therelpath=$(mksite_relpath $mypath $path)
 	replace="${replace} -e 's;(%${id}%);(${therelpath});g'"
     done
@@ -29,8 +30,12 @@ mksite_getid()
 mksite_getlinks()
 {
     file=$1
-    links=$(grep -o '(%[[:digit:]]*%)' $file | sort -u | grep -o '[[:digit:]]*' | xargs -I {} -n 1 find src -type f -name '{}-*')
-    echo "$links"
+    id=$(mksite_getid $file)
+    links=$(grep -rl "(%${id}%)" src | sort -u) # | grep -o '[[:digit:]]*')
+
+    for link in $links; do
+	echo $(mksite_getoutpath $link)
+    done
 }
 
 mksite_getoutpath()
@@ -75,29 +80,6 @@ mksite_relpath()
     fi
 
     echo $result$target_file
-}
-
-mksite_selectpath()
-{
-    path=$(sqlite3 paths/paths.sql "select path from paths where id=$1")
-    if [ -z $path ]; then
-	echo "Error: No path for $1"
-	exit 1
-    fi
-    echo $path
-}
-
-mksite_upsertpath()
-{
-    id=$(mksite_getid $1)
-    path=$(mksite_getoutpath $1)
-
-    if [ -n "$id" ]; then
-	sqlite3 -cmd '.timeout 100' paths/paths.sql "insert into paths values($id, '$path') on conflict(id) do update set path='$path'"
-    else
-	echo "$1 has no id" > /dev/stderr
-	exit 1
-    fi
 }
 
 cmd=$1
