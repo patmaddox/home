@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+jlfs_dist=/tmp/jlfs-dist
+
 if [ ! "$1" ]; then
   echo "Usage: jlfs <name>"
   exit 1
@@ -27,9 +29,9 @@ if [ $mymountpoint = "/" ]; then
     zfs create -o jailed=on -o mountpoint=none ${jroot}/${name}/zdata
 fi
 
-if [ ! -f ~/dist/base.txz ]; then
-  mkdir -p ~/dist
-  fetch -o ~/dist/base.txz https://download.freebsd.org/releases/amd64/13.1-RELEASE/base.txz
+if [ ! -f $jlfs_dist/base.txz ]; then
+  mkdir -p $jlfs_dist
+  fetch -o $jlfs_dist/base.txz https://download.freebsd.org/releases/amd64/13.1-RELEASE/base.txz
 fi
 
-tar -C /jails/${name} -xf ~/dist/base.txz
+tar -C /jails/${name} -xf $jlfs_dist/base.txz
