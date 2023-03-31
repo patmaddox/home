@@ -2,16 +2,16 @@ help:
   @just -l
 
 build-prod:
-  poudriere bulk -j 13_1 -O local -f prod -b latest -v
+  poudriere bulk -j 131amd64 -O local -f prod -b latest
 
 build-dev:
-  poudriere bulk -j 13_1 -O local -C -f dev -b latest
+  poudriere bulk -j 131amd64 -O local -C -f dev
 
 outdated:
-  poudriere bulk -j 13_1 -O local -f prod -n
+  poudriere bulk -j 131amd64 -O local -f prod -n
 
 update:
   poudriere ports -u
 
 clean:
-  poudriere pkgclean -j 13_1 -O local -f prod
+  poudriere pkgclean -j 131amd64 -O local -f prod
