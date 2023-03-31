@@ -1,10 +1,12 @@
 *~
 .sqlite_history
+.vscode-oss
 /.ICEauthority
 /.Xauthority
 /.cache
 /.config
 /.dbus
+/.emacs.d/eshell/history
 /.emacs.d/projectile-bookmarks.eld
 /.emacs.d/projectile.cache
 /.emacs.d/straight/build
