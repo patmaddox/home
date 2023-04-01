@@ -1,4 +1,5 @@
 *~
+.sh_history
 .sqlite_history
 .vscode-oss
 /.ICEauthority
